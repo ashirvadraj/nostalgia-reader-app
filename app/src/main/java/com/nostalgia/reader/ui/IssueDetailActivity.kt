@@ -45,7 +45,9 @@ class IssueDetailActivity : AppCompatActivity() {
         binding.tvDetailHeaderTitle.text = pub.series
         binding.tvDetailTitle.text = pub.title
         binding.badgeSeries.text = pub.series
-        binding.badgeYear.text = "वर्ष: ${pub.year}"
+
+        val monthLabel = pub.issueMonthName ?: "वर्ष: ${pub.year}"
+        binding.badgeYear.text = monthLabel
         binding.badgePages.text = "${pub.pageCount} पृष्ठ"
         binding.tvDetailDescription.text = pub.description
 
@@ -86,6 +88,7 @@ class IssueDetailActivity : AppCompatActivity() {
         }
 
         // Read Now Button
+        binding.btnReadNow.text = if (pub.isDailyNewspaper) "अखबार पढ़ें (Read Paper)" else getString(R.string.btn_read_now)
         binding.btnReadNow.setOnClickListener {
             val intent = Intent(this, ReaderActivity::class.java).apply {
                 putExtra(ReaderActivity.EXTRA_PUBLICATION, pub)

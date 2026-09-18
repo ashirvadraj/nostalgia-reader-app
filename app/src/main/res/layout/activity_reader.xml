@@ -6,11 +6,18 @@
     android:layout_height="match_parent"
     android:background="@color/bg_dark">
 
-    <!-- Horizontal Page Turning ViewPager2 -->
+    <!-- Horizontal Page Turning ViewPager2 (Complete Illustrated Reading Mode) -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerReader"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <!-- Live Official ePaper Web View (Broadsheet ePaper Mode) -->
+    <WebView
+        android:id="@+id/webViewEpaper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <!-- Top Overlay Toolbar (Auto-hideable) -->
     <LinearLayout
@@ -57,6 +64,17 @@
                 android:textColor="@color/accent"
                 android:textSize="11sp" />
         </LinearLayout>
+
+        <!-- ePaper Live View Toggle (for Daily Newspapers) -->
+        <ImageView
+            android:id="@+id/btnToggleEpaper"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_globe"
+            android:visibility="gone"
+            app:tint="@color/accent" />
 
         <!-- Theme Toggle (Parchment, Sepia, Night) -->
         <ImageView

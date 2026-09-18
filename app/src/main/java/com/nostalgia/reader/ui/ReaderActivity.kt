@@ -1,7 +1,12 @@
 package com.nostalgia.reader.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import android.webkit.WebChromeClient
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +25,7 @@ class ReaderActivity : AppCompatActivity() {
     private lateinit var prefsManager: PreferencesManager
     private lateinit var pagerAdapter: ReaderPagerAdapter
     private var publication: Publication? = null
-    private var isControlsVisible = true
+    private var isEpaperMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +42,7 @@ class ReaderActivity : AppCompatActivity() {
         }
 
         setupReader(publication!!)
+        setupEpaperWebView(publication!!)
     }
 
     private fun setupReader(pub: Publication) {
@@ -46,11 +52,9 @@ class ReaderActivity : AppCompatActivity() {
 
         binding.tvReaderTitle.text = pub.title
 
-        // Setup Page Indicator & SeekBar
         val totalPages = pub.pages.size
         binding.seekBarPages.max = totalPages - 1
 
-        // Restore start page if saved or passed
         val savedProgress = prefsManager.getReadingProgress(pub.id)
         val passedStartPage = intent.getIntExtra(EXTRA_START_PAGE, -1)
         val initialPage = when {
@@ -63,14 +67,12 @@ class ReaderActivity : AppCompatActivity() {
         updatePageIndicator(initialPage, totalPages)
         binding.seekBarPages.progress = initialPage
 
-        // Page change callback
         binding.viewPagerReader.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 updatePageIndicator(position, totalPages)
                 binding.seekBarPages.progress = position
 
-                // Save reading progress auto-bookmark
                 val progress = ReadingProgress(
                     publicationId = pub.id,
                     title = pub.title,
@@ -83,7 +85,6 @@ class ReaderActivity : AppCompatActivity() {
             }
         })
 
-        // Prev / Next Page Buttons
         binding.btnPrevPage.setOnClickListener {
             val curr = binding.viewPagerReader.currentItem
             if (curr > 0) binding.viewPagerReader.currentItem = curr - 1
@@ -94,7 +95,6 @@ class ReaderActivity : AppCompatActivity() {
             if (curr < totalPages - 1) binding.viewPagerReader.currentItem = curr + 1
         }
 
-        // SeekBar change
         binding.seekBarPages.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) {
@@ -105,25 +105,71 @@ class ReaderActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        // Back button
         binding.btnReaderBack.setOnClickListener {
-            finish()
+            if (isEpaperMode && binding.webViewEpaper.canGoBack()) {
+                binding.webViewEpaper.goBack()
+            } else {
+                finish()
+            }
         }
 
-        // Theme Toggle (Parchment -> Sepia -> Night -> Parchment)
         binding.btnThemeToggle.setOnClickListener {
             cycleTheme()
         }
 
-        // Bookmark Toggle
         binding.btnReaderBookmark.setOnClickListener {
             val currPage = binding.viewPagerReader.currentItem + 1
             Toast.makeText(this, "पृष्ठ $currPage बुकमार्क किया गया", Toast.LENGTH_SHORT).show()
         }
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun setupEpaperWebView(pub: Publication) {
+        if (!pub.epaperUrl.isNullOrBlank()) {
+            binding.btnToggleEpaper.visibility = View.VISIBLE
+
+            val webSettings = binding.webViewEpaper.settings
+            webSettings.javaScriptEnabled = true
+            webSettings.domStorageEnabled = true
+            webSettings.builtInZoomControls = true
+            webSettings.displayZoomControls = false
+            webSettings.useWideViewPort = true
+            webSettings.loadWithOverviewMode = true
+            webSettings.cacheMode = WebSettings.LOAD_DEFAULT
+
+            binding.webViewEpaper.webViewClient = object : WebViewClient() {}
+            binding.webViewEpaper.webChromeClient = object : WebChromeClient() {}
+
+            binding.btnToggleEpaper.setOnClickListener {
+                toggleEpaperMode(pub.epaperUrl)
+            }
+        } else {
+            binding.btnToggleEpaper.visibility = View.GONE
+        }
+    }
+
+    private fun toggleEpaperMode(url: String) {
+        isEpaperMode = !isEpaperMode
+        if (isEpaperMode) {
+            binding.viewPagerReader.visibility = View.GONE
+            binding.webViewEpaper.visibility = View.VISIBLE
+            binding.toolbarBottom.visibility = View.GONE
+            binding.webViewEpaper.loadUrl(url)
+            Toast.makeText(this, "लाइव ई-अखबार (Official ePaper) लोड हो रहा है...", Toast.LENGTH_SHORT).show()
+        } else {
+            binding.webViewEpaper.visibility = View.GONE
+            binding.viewPagerReader.visibility = View.VISIBLE
+            binding.toolbarBottom.visibility = View.VISIBLE
+            Toast.makeText(this, "डिजिटल रीडर मोड (Digital Reader Mode)", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun updatePageIndicator(page: Int, total: Int) {
-        binding.tvReaderPageIndicator.text = "पृष्ठ ${page + 1} / $total"
+        val pub = publication
+        val section = if (pub != null && page < pub.pages.size && !pub.pages[page].sectionName.isNullOrBlank()) {
+            " • ${pub.pages[page].sectionName}"
+        } else ""
+        binding.tvReaderPageIndicator.text = "पृष्ठ ${page + 1} / $total$section"
     }
 
     private fun cycleTheme() {

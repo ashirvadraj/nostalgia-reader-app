@@ -38,18 +38,19 @@ class PublicationAdapter(
         fun bind(item: Publication) {
             binding.tvTitle.text = item.title
             binding.tvTag.text = item.series
-            binding.tvSubInfo.text = "${item.year} • ${item.pageCount} पृष्ठ"
 
-            // Tag color accent based on category
-            val tagColor = when (item.category) {
-                "MAGAZINE" -> ContextCompat.getColor(context, R.color.tag_champak)
-                "COMIC" -> ContextCompat.getColor(context, R.color.tag_comics)
-                "NEWSPAPER" -> ContextCompat.getColor(context, R.color.tag_newspaper)
+            val dateInfo = item.issueMonthName ?: "${item.year}"
+            binding.tvSubInfo.text = "$dateInfo • ${item.pageCount} पृष्ठ"
+
+            val tagColor = when {
+                item.isDailyNewspaper -> ContextCompat.getColor(context, R.color.tag_chandamama)
+                item.category == "MAGAZINE" -> ContextCompat.getColor(context, R.color.tag_champak)
+                item.category == "COMIC" -> ContextCompat.getColor(context, R.color.tag_comics)
+                item.category.startsWith("NEWSPAPER") -> ContextCompat.getColor(context, R.color.tag_newspaper)
                 else -> ContextCompat.getColor(context, R.color.primary)
             }
             binding.tvTag.setBackgroundColor(tagColor)
 
-            // Load Cover with fallback placeholder
             Glide.with(context)
                 .load(item.coverUrl)
                 .placeholder(R.drawable.ic_book)
