@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Nostalgia Reader</string>
+    <string name="app_name_hindi">बाल पत्रिकाएँ व कॉमिक्स</string>
+    <string name="tagline">चंपक, नंदन, कॉमिक्स और बचपन की पुरानी यादें</string>
+
+    <string name="search_hint">खोजें: चंपक, नंदन, चाचा चौधरी, 1990...</string>
+    <string name="category_all">सभी (All)</string>
+    <string name="category_magazines">पत्रिकाएँ (Magazines)</string>
+    <string name="category_comics">कॉमिक्स (Comics)</string>
+    <string name="category_newspapers">अखबार व विशेषांक (Sunday Strips)</string>
+
+    <string name="section_continue_reading">पढ़ना जारी रखें (Continue Reading)</string>
+    <string name="section_popular">लोकप्रिय विशेषांक (Featured Nostalgia)</string>
+    <string name="section_champak">चंपक संग्रह (Champak Archives)</string>
+    <string name="section_nandan">नंदन विशेषांक (Nandan Collection)</string>
+    <string name="section_comics">चाचा चौधरी व भारतीय कॉमिक्स (Indian Comics)</string>
+    <string name="section_chandamama">चंदामामा व पौराणिक कथाएँ (Chandamama)</string>
+
+    <string name="btn_read_now">अभी पढ़ें (Read Now)</string>
+    <string name="btn_download_offline">ऑफ़लाइन डाउनलोड (Download)</string>
+    <string name="btn_downloaded">ऑफ़लाइन सुरक्षित (Saved Offline)</string>
+    <string name="btn_favorite">पसंदीदा</string>
+    <string name="btn_import_local">स्थानीय फाइल खोलें (Open PDF/CBZ)</string>
+
+    <string name="filter_decade_all">सभी दशक</string>
+    <string name="filter_1970s">1970s</string>
+    <string name="filter_1980s">1980s</string>
+    <string name="filter_1990s">1990s</string>
+    <string name="filter_2000s">2000s</string>
+
+    <string name="filter_lang_all">सभी भाषाएँ</string>
+    <string name="filter_lang_hi">हिन्दी (Hindi)</string>
+    <string name="filter_lang_en">English</string>
+
+    <string name="reading_theme_parchment">कागज़ (Parchment)</string>
+    <string name="reading_theme_sepia">सीपिया (Sepia)</string>
+    <string name="reading_theme_night">नाइट मोड (Night)</string>
+
+    <string name="tab_home">होम</string>
+    <string name="tab_favorites">पसंदीदा</string>
+    <string name="tab_offline">ऑफ़लाइन</string>
+</resources>
